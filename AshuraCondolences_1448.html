@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@500;700&family=Cairo:wght@300;600;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@500;700&family=Cairo:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
 
@@ -184,7 +184,7 @@
       }
 
       /* ----------------------------------
-           تصميم البطاقة الإبداعي الفني
+           البطاقة الفنية
         ------------------------------------- */
       .art-card-container {
         display: flex;
@@ -249,6 +249,7 @@
         z-index: 3;
         pointer-events: none;
       }
+
       .art-frame::before {
         content: "";
         position: absolute;
@@ -276,7 +277,8 @@
         white-space: nowrap;
         z-index: 2;
         pointer-events: none;
-        letter-spacing: -2px;
+        direction: rtl;
+        letter-spacing: 0px;
       }
 
       .card-inner-content {
@@ -291,7 +293,6 @@
         width: 100%;
       }
 
-      /* الرأسية العلوية المحدثة للشعار والتاريخ */
       .card-header-zone {
         display: flex;
         flex-direction: column;
@@ -299,34 +300,36 @@
         gap: 8px;
         width: 100%;
       }
+
       .logo-wrapper {
         height: 60px;
         display: flex;
         align-items: center;
         justify-content: center;
       }
+
+      /* تم إزالة فلاتر الألوان لضمان تطابق الصورة الأصلية في المعاينة والتصدير تماماً */
       .logo-img {
         max-height: 100%;
-        max-width: 140px;
+        max-width: 350px;
         object-fit: contain;
-        filter: grayscale(1) brightness(1.5);
       }
+
       .logo-fallback {
         font-family: "Reem Kufi", sans-serif;
         font-size: 0.95rem;
         color: var(--gold);
-        letter-spacing: 2px;
+        direction: rtl;
       }
 
-      /* الموقع الجديد للسنة الهجرية: ناعم، علوي، ومتزن */
       .meta-hijri {
         font-size: 0.75rem;
         color: var(--gold);
-        letter-spacing: 1px;
         opacity: 0.75;
         border-top: 1px solid rgba(197, 168, 128, 0.2);
         padding-top: 4px;
         min-width: 60px;
+        direction: rtl;
       }
 
       .main-quote {
@@ -335,33 +338,44 @@
         line-height: 1.9;
         color: #f0f0f0;
         padding: 0 5px;
-        text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         font-weight: 400;
+        direction: rtl;
+        letter-spacing: 0px;
+        display: block;
       }
+
       .main-quote em {
         font-style: normal;
         color: var(--gold);
         font-weight: 700;
       }
 
-      /* تذييل البطاقة */
       .card-meta {
         width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 2px;
+        direction: rtl;
       }
+
       .meta-sender {
-        font-size: 1.05rem;
+        font-size: 1.1rem;
         font-weight: 600;
         color: #ffffff;
-        letter-spacing: 0.5px;
+        display: block;
+        width: 100%;
+        direction: rtl;
+        letter-spacing: 0px;
       }
+
       .meta-sub {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         color: var(--text-gray);
-        font-weight: 300;
+        font-weight: 400;
+        display: block;
+        width: 100%;
+        direction: rtl;
       }
 
       .art-card.story-mode {
@@ -400,7 +414,7 @@
         </div>
 
         <div class="input-group">
-          <label for="name-in">اسم المعزي :</label>
+          <label for="name-in">اسم المعزي:</label>
           <input
             type="text"
             id="name-in"
@@ -420,7 +434,7 @@
         </div>
 
         <div class="input-group">
-          <label for="hijri-in">السنة الهجرية:</label>
+          <label for="hijri-in">السنة الهجرية لتوثيق التصميم:</label>
           <input
             type="text"
             id="hijri-in"
@@ -457,7 +471,7 @@
         </div>
 
         <button class="btn-export" onclick="exportCreativeCard()">
-          تصدير البطاقة
+          تصدير البطاقة الإبداعية
         </button>
       </div>
 
@@ -470,7 +484,7 @@
           <div class="bg-typography">بِالحُسَينِ</div>
 
           <div class="card-inner-content">
-            <!-- الرأسية العلوية: تجمع الشعار والسنة الهجرية بنسق متناغم -->
+            <!-- الرأسية العلوية -->
             <div class="card-header-zone">
               <div class="logo-wrapper" id="cardLogoZone">
                 <span class="logo-fallback" id="fallbackTxt"
@@ -484,11 +498,11 @@
             <div class="main-quote">
               عظَمَ اللهُ اُجُورَنا بِمُصابِنا
               <em>بِالحُسَينِ عليه السلام</em> وَجَعَلَنا وَإياكُم مِنَ
-              الطَّالِبِينَ بِثَأرِهِ مَعَ وَلِيِّهِ الإمام المَهدِيِّ مِن آلِ
+              الطَّالِينَ بِثَأرِهِ مَعَ وَلِيِّهِ الإمام المَهدِيِّ مِن آلِ
               مُحَمَّدٍ عليهم السلام
             </div>
 
-            <!-- التوقيع والتذييل السفلي مخصص للأسماء تماماً وبشكل مريح للعين -->
+            <!-- التوقيع والتذييل السفلي المحمي برمجياً -->
             <div class="card-meta">
               <div class="meta-sender" id="cardSender">آجركم الله</div>
               <div class="meta-sub" id="cardSub"></div>
@@ -583,6 +597,19 @@
           useCORS: true,
           allowTaint: true,
           logging: false,
+          letterRendering: false,
+          onclone: function (clonedDoc) {
+            const clonedSender = clonedDoc.getElementById("cardSender");
+            const clonedSub = clonedDoc.getElementById("cardSub");
+            if (clonedSender) {
+              clonedSender.style.display = "block";
+              clonedSender.style.direction = "rtl";
+            }
+            if (clonedSub) {
+              clonedSub.style.display = "block";
+              clonedSub.style.direction = "rtl";
+            }
+          },
         };
 
         html2canvas(element, renderOptions).then(function (canvas) {
