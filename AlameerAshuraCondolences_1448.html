@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>صانع بطاقات تعزية عاشورائية</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@500;700&family=Cairo:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+      :root {
+        --bg-main: #0a0a0a;
+        --panel-bg: #141414;
+        --text-gray: #aaa;
+        --gold: #c5a880;
+        --ashoora-red: #9e1b1b;
+        --border-clr: #262626;
+      }
+
+      /* تهيئة عامة مريحة للمس للهواتف */
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: "Cairo", sans-serif;
+        background-color: var(--bg-main);
+        color: #fff;
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      h1 {
+        font-family: "Reem Kufi", sans-serif;
+        color: var(--gold);
+        font-size: 1.5rem;
+        margin: 15px 0 25px 0;
+        text-align: center;
+        letter-spacing: 0.5px;
+      }
+
+      /* حاوية الحماية المحجوبة افتراضياً */
+      #protectedContent {
+        display: none;
+        width: 100%;
+        max-width: 1200px;
+      }
+
+      /* ميديا كويري ذكية: تترتب عمودياً في الهواتف وتصبح جنباً إلى جنب في الكمبيوتر */
+      .main-container {
+        display: flex;
+        flex-direction: column; /* للهواتف افتراضياً */
+        gap: 25px;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+
+      @media (min-width: 992px) {
+        .main-container {
+          flex-direction: row; /* للكمبيوتر */
+          align-items: flex-start;
+          padding: 0 20px;
+        }
+      }
+
+      /* لوحة التحكم وتكييف أزرار اللمس لتناسب الأصابع */
+      .control-panel {
+        background: var(--panel-bg);
+        border: 1px solid var(--border-clr);
+        border-radius: 16px;
+        padding: 20px;
+        width: 100%;
+        max-width: 400px;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .control-panel h2 {
+        font-size: 1rem;
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: var(--gold);
+        border-bottom: 1px solid var(--border-clr);
+        padding-bottom: 10px;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      .input-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.8rem;
+        color: var(--text-gray);
+      }
+
+      /* حجم خط 16px لمنع الـ Auto-zoom الإجباري في متصفحات الهواتف */
+      .input-group input[type="text"] {
+        width: 100%;
+        height: 48px; /* حجم لمس قياسي مريح */
+        padding: 12px;
+        border: 1px solid var(--border-clr);
+        background: #1a1a1a;
+        color: #fff;
+        border-radius: 8px;
+        font-family: "Cairo", sans-serif;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+
+      .input-group input[type="text"]:focus {
+        border-color: var(--ashoora-red);
+        outline: none;
+      }
+
+      .upload-btn-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: block;
+      }
+
+      .btn-upload {
+        border: 1px dashed #444;
+        color: #888;
+        background-color: #1a1a1a;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .input-group input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+      }
+
+      .toggle-sizes {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-size {
+        flex: 1;
+        height: 45px;
+        background: #1a1a1a;
+        border: 1px solid var(--border-clr);
+        color: var(--text-gray);
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: "Cairo", sans-serif;
+        font-size: 0.8rem;
+        transition: 0.3s;
+      }
+
+      .btn-size.active {
+        background: var(--ashoora-red);
+        color: #fff;
+        border-color: transparent;
+      }
+
+      .btn-export {
+        width: 100%;
+        height: 52px;
+        background: linear-gradient(135deg, #c5a880 0%, #a3855c 100%);
+        color: #0a0a0a;
+        border: none;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        cursor: pointer;
+        font-family: "Cairo", sans-serif;
+        margin-top: 10px;
+      }
+
+      /* ----------------------------------
+           منطقة العرض والـ Responsive Scaling للهواتف
+        ------------------------------------- */
+      .art-card-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      /* التفاف ذكي لتقليص الكرت نسبياً بمرونة ليتناسب مع شاشات الموبايل الضيقة دون الخروج عن الحواف */
+      .art-card-scaler {
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .art-card {
+        width: 500px;
+        height: 500px;
+        background: #0f0f11;
+        position: relative;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 40px 35px;
+        box-sizing: border-box;
+        flex-shrink: 0; /* يمنع الضغط العشوائي قبل التحويل */
+        transform-origin: center center;
+      }
+
+      .art-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(20, 20, 25, 0.4) 0%,
+            rgba(5, 5, 5, 0.95) 100%
+          ),
+          linear-gradient(45deg, rgba(158, 27, 27, 0.05) 0%, transparent 70%);
+        z-index: 1;
+      }
+
+      /* طبقة دمج الخلفية الافتراضية المجلوبة عبر الرابط التلقائي */
+      .washout-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("./assets/images/AIAzza1448.png"); /* رابط خلفية افتراضية منسقة */
+        background-size: cover;
+        background-position: center;
+        opacity: 0.12;
+        z-index: 2;
+        mix-blend-mode: luminosity;
+      }
+
+      .art-frame {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        border: 1px solid rgba(197, 168, 128, 0.15);
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      .art-frame::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 20px;
+        right: 20px;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--gold),
+          transparent
+        );
+      }
+
+      .bg-typography {
+        position: absolute;
+        font-family: "Amiri", serif;
+        font-size: 5.5rem;
+        font-weight: bold;
+        color: rgba(158, 27, 27, 0.16);
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        z-index: 2;
+        pointer-events: none;
+        direction: rtl;
+        letter-spacing: 0px;
+      }
+
+      .card-inner-content {
+        position: relative;
+        z-index: 4;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+        width: 100%;
+      }
+
+      .card-header-zone {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+      }
+
+      .logo-wrapper {
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo-img {
+        max-height: 100%;
+        max-width: 130px;
+        object-fit: contain;
+      }
+
+      .meta-hijri {
+        font-size: 0.7rem;
+        color: var(--gold);
+        opacity: 0.75;
+        border-top: 1px solid rgba(197, 168, 128, 0.2);
+        padding-top: 4px;
+        min-width: 60px;
+        direction: rtl;
+      }
+
+      .main-quote {
+        font-family: "Amiri", serif;
+        font-size: 1.45rem;
+        line-height: 1.8;
+        color: #f0f0f0;
+        padding: 0 2px;
+        font-weight: 400;
+        direction: rtl;
+        letter-spacing: 0px;
+        display: block;
+      }
+
+      .main-quote em {
+        font-style: normal;
+        color: var(--gold);
+        font-weight: 700;
+      }
+
+      .card-meta {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        direction: rtl;
+      }
+
+      .meta-sender {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #ffffff;
+        display: block;
+        width: 100%;
+        direction: rtl;
+      }
+
+      .meta-sub {
+        font-size: 0.8rem;
+        color: var(--text-gray);
+        font-weight: 400;
+        display: block;
+        width: 100%;
+        direction: rtl;
+      }
+
+      /* تهيئة أبعاد نمط الاستوري للأجهزة الجوالة */
+      .art-card.story-mode {
+        width: 360px;
+        height: 640px;
+        padding: 55px 30px;
+      }
+      .art-card.story-mode .bg-typography {
+        font-size: 4.5rem;
+        top: 48%;
+      }
+      .art-card.story-mode .main-quote {
+        font-size: 1.35rem;
+        line-height: 1.9;
+      }
+    </style>
+
+    <script>
+      function runGatekeeperAuth() {
+        var targetUsername = "sankees";
+        var targetPassword = "14482026";
+
+        var enteredUsername = prompt("الرجاء إدخال اسم المستخدم:");
+        var enteredPassword = prompt("الرجاء إدخال كلمة المرور:");
+
+        if (
+          enteredUsername === targetUsername &&
+          enteredPassword === targetPassword
+        ) {
+          document.getElementById("protectedContent").style.display = "block";
+          adjustCardScaleForMobile(); // موازنة حجم الكرت فور التوثيق
+        } else {
+          alert("بيانات الدخول غير صحيحة!");
+          window.location.reload();
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>منصة اصدار بطاقات تعزية بإستشهاد سيد الشهداء سلام الله عليه</h1>
+
+    <div id="protectedContent">
+      <div class="main-container">
+        <div class="control-panel">
+          <h2>أدوات التخصيص</h2>
+
+          <div class="input-group">
+            <label>أبعاد التصدير الفني:</label>
+            <div class="toggle-sizes">
+              <button class="btn-size active" onclick="setCardSize('post')">
+                منشور مربع (1:1)
+              </button>
+              <button class="btn-size" onclick="setCardSize('story')">
+                قصة / حالة (16:9)
+              </button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="name-in">اسم المعزي الإيجازي:</label>
+            <input
+              type="text"
+              id="name-in"
+              placeholder="مثال: يوسف الكاظم"
+              value="خادم الحسين"
+              oninput="renderLiveText()"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="group-in">اسم الحسينية أو الجهة:</label>
+            <input
+              type="text"
+              id="group-in"
+              placeholder="مثال: حسينية كربلاء"
+              value="حسينية الأمير عليه السلام"
+              oninput="renderLiveText()"
+            />
+          </div>
+
+          <div class="input-group">
+            <label for="hijri-in">السنة الهجرية لتوثيق التصميم:</label>
+            <input
+              type="text"
+              id="hijri-in"
+              value="1448 هـ"
+              placeholder="مثال: 1448 هـ"
+              oninput="renderLiveText()"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>شعار المؤسسة (شفاف عالي الجودة):</label>
+            <div class="upload-btn-wrapper">
+              <div class="btn-upload" id="logo-status">
+                اضغط لرفع الشعار الخاص
+              </div>
+              <input
+                type="file"
+                id="logo-file"
+                accept="image/*"
+                onchange="loadLogo(this)"
+              />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label>خلفية مخصصة (تأثير دمج سينمائي داكن):</label>
+            <div class="upload-btn-wrapper">
+              <div class="btn-upload" id="bg-status">
+                اضغط لرفع الخلفية الخاصة
+              </div>
+              <input
+                type="file"
+                id="bg-file"
+                accept="image/*"
+                onchange="loadBackground(this)"
+              />
+            </div>
+          </div>
+
+          <button class="btn-export" onclick="exportCreativeCard()">
+            تصدير الصورة
+          </button>
+        </div>
+
+        <div class="art-card-container">
+          <div class="art-card-scaler" id="cardScaler">
+            <div class="art-card" id="artCard">
+              <div class="washout-layer" id="washoutLayer"></div>
+              <div class="art-frame"></div>
+
+              <div class="bg-typography">واحسيناه</div>
+
+              <div class="card-inner-content">
+                <div class="card-header-zone">
+                  <div class="logo-wrapper" id="cardLogoZone">
+                    <img
+                      src="./assets/images/AlameerGolden.png"
+                      class="logo-img"
+                      alt="شعار افتراضي"
+                    />
+                  </div>
+                  <div class="meta-hijri" id="cardHijri">1448 هـ</div>
+                </div>
+
+                <div class="main-quote">
+                  عظَمَ اللهُ اُجُورَنا بِمُصابِنا
+                  <em>بِالحُسَينِ عليه السلام</em> وَجَعَلَنا وَإياكُم مِنَ
+                  الطَّالِينَ بِثَأرِهِ مَعَ وَلِيِّهِ الإمام المَهدِيِّ مِن آلِ
+                  مُحَمَّدٍ عليهم السلام
+                </div>
+
+                <div class="card-meta">
+                  <div class="meta-sender" id="cardSender">خادم الحسين</div>
+                  <div class="meta-sub" id="cardSub">
+                    حسينية الأمير عليه السلام
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // تفعيل بوابة التحقق فور التحميل
+      window.onload = function () {
+        runGatekeeperAuth();
+      };
+
+      // دالة موازنة وتصغير حجم كرت العرض برمجياً ليلائم الشاشات الصغيرة دون تمدد الهيكل الخارجي للـ DOM
+      function adjustCardScaleForMobile() {
+        const card = document.getElementById("artCard");
+        const container = document.getElementById("cardScaler");
+        if (!card || !container) return;
+
+        const containerWidth = container.offsetWidth;
+        const cardWidth = card.offsetWidth;
+
+        if (containerWidth < cardWidth) {
+          const scaleFactor = containerWidth / (cardWidth + 10);
+          card.style.transform = `scale(${scaleFactor})`;
+          card.style.margin = `0 -${(cardWidth - containerWidth) / 2}px`;
+        } else {
+          card.style.transform = "none";
+          card.style.margin = "0";
+        }
+      }
+
+      // الاستماع لتغيير حجم الشاشة وتعديل الأبعاد تلقائياً للهواتف
+      window.addEventListener("resize", adjustCardScaleForMobile);
+
+      function renderLiveText() {
+        const nameIn = document.getElementById("name-in").value;
+        const groupIn = document.getElementById("group-in").value;
+        const hijriIn = document.getElementById("hijri-in").value;
+
+        const cardSender = document.getElementById("cardSender");
+        const cardSub = document.getElementById("cardSub");
+        const cardHijri = document.getElementById("cardHijri");
+
+        cardSender.innerText = nameIn ? nameIn : "آجركم الله";
+        cardSub.innerText = groupIn ? groupIn : "";
+        cardHijri.innerText = hijriIn ? hijriIn : "1448 هـ";
+
+        cardHijri.style.display = !hijriIn ? "none" : "block";
+        adjustCardScaleForMobile();
+      }
+
+      function loadLogo(input) {
+        const file = input.files[0];
+        const zone = document.getElementById("cardLogoZone");
+        const status = document.getElementById("logo-status");
+
+        if (file) {
+          status.innerText = "تم دمج الشعار بنجاح";
+          status.style.borderColor = "var(--gold)";
+          status.style.color = "#fff";
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            zone.innerHTML = `<img src="${e.target.result}" class="logo-img" alt="شعار">`;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      function loadBackground(input) {
+        const file = input.files[0];
+        const layer = document.getElementById("washoutLayer");
+        const status = document.getElementById("bg-status");
+
+        if (file) {
+          status.innerText = "تم دمج الخلفية الفنية";
+          status.style.borderColor = "var(--gold)";
+          status.style.color = "#fff";
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            layer.style.backgroundImage = `url('${e.target.result}')`;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      function setCardSize(sizeType) {
+        const card = document.getElementById("artCard");
+        const btns = document.querySelectorAll(".btn-size");
+
+        btns.forEach((b) => b.classList.remove("active"));
+
+        if (sizeType === "post") {
+          card.classList.remove("story-mode");
+          btns[0].classList.add("active");
+        } else if (sizeType === "story") {
+          card.classList.add("story-mode");
+          btns[1].classList.add("active");
+        }
+
+        // إعادة حساب النسبة المئوية للمعاينة فور تغيير المقاسات
+        setTimeout(adjustCardScaleForMobile, 50);
+      }
+
+      function exportCreativeCard() {
+        const element = document.getElementById("artCard");
+
+        // تهيئة الخيارات الفنية للتصدير الآمن متضمناً الروابط الخارجية (CORS و Taint) والـ Scale المطور وثبات الـ RTL
+        const renderOptions = {
+          scale: 3,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          letterRendering: false,
+          onclone: function (clonedDoc) {
+            const clonedCard = clonedDoc.getElementById("artCard");
+            if (clonedCard) {
+              clonedCard.style.transform = "none";
+              clonedCard.style.margin = "0";
+            }
+            const clonedSender = clonedDoc.getElementById("cardSender");
+            const clonedSub = clonedDoc.getElementById("cardSub");
+            if (clonedSender) {
+              clonedSender.style.display = "block";
+              clonedSender.style.direction = "rtl";
+            }
+            if (clonedSub) {
+              clonedSub.style.display = "block";
+              clonedSub.style.direction = "rtl";
+            }
+          },
+        };
+
+        html2canvas(element, renderOptions).then(function (canvas) {
+          const downloadLink = document.createElement("a");
+          downloadLink.download = `تصميم_عاشوراء_المطور_${Date.now()}.png`;
+          downloadLink.href = canvas.toDataURL("image/png");
+          downloadLink.click();
+        });
+      }
+    </script>
+  </body>
+</html>
