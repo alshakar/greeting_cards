@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>صانع بطاقات التعزية - عاشوراء</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Reem+Kufi:wght@500;700&family=Tajawal:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+      :root {
+        --bg-dark: #121212;
+        --panel-bg: #1e1e1e;
+        --text-light: #e0e0e0;
+        --accent-color: #8b0000; /* أحمر داكن يرمز للمناسبة */
+        --border-color: #333;
+      }
+
+      body {
+        font-family: "Tajawal", sans-serif;
+        background-color: var(--bg-dark);
+        color: var(--text-light);
+        margin: 0;
+        padding: 20 days;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      h1 {
+        font-family: "Reem Kufi", sans-serif;
+        color: #d4af37; /* لون ذهبي حسيني */
+        margin-bottom: 30px;
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 1200px;
+      }
+
+      /* لوحة التحكم والإعدادات */
+      .settings-panel {
+        background: var(--panel-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 25px;
+        width: 350px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      }
+
+      .settings-panel h2 {
+        font-size: 1.2rem;
+        margin-top: 0;
+        margin-bottom: 20px;
+        border-bottom: 2px solid var(--accent-color);
+        padding-bottom: 10px;
+        color: #fff;
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        color: #bbb;
+      }
+
+      .form-group input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        background: #2a2a2a;
+        color: #fff;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-family: "Tajawal", sans-serif;
+      }
+
+      .form-group input[type="file"] {
+        display: none;
+      }
+
+      .file-custom-btn {
+        display: block;
+        text-align: center;
+        padding: 10px;
+        background: #2a2a2a;
+        border: 1px dashed #555;
+        color: #ccc;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.85rem;
+      }
+
+      .file-custom-btn:hover {
+        border-color: var(--accent-color);
+        color: #fff;
+      }
+
+      .size-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .size-btn {
+        flex: 1;
+        padding: 10px;
+        background: #2a2a2a;
+        border: 1px solid var(--border-color);
+        color: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: "Tajawal", sans-serif;
+        font-size: 0.85rem;
+        transition: 0.3s;
+      }
+
+      .size-btn.active {
+        background: var(--accent-color);
+        border-color: #ff3333;
+      }
+
+      .download-btn {
+        width: 100%;
+        padding: 12px;
+        background: #d4af37;
+        color: #000;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        font-family: "Tajawal", sans-serif;
+        transition: 0.3s;
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+      }
+
+      .download-btn:hover {
+        background: #ffcc24;
+        transform: translateY(-2px);
+      }
+
+      /* منطقة عرض البطاقة */
+      .preview-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* تصميم بطاقة التعزية */
+      .card-canvas {
+        width: 500px;
+        height: 500px; /* الافتراضي بوست إنستغرام 1:1 */
+        background-color: #ffffff; /* الافتراضي أبيض عند عدم وجود خلفية */
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        overflow: hidden;
+        transition:
+          width 0.3s,
+          height 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 40px;
+        box-sizing: border-box;
+      }
+
+      /* طبقة الـ Washout المؤثرة لتوائم أجواء الحزن والوضوح */
+      .card-canvas::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(
+          255,
+          255,
+          255,
+          0.85
+        ); /* تأثير الـ Washout الأبيض للحفاظ على هيبة النص */
+        z-index: 1;
+      }
+
+      /* تغيير التأثير لو كانت الخلفية بيضاء تماماً لإعطائها عمق رخامي أو ضبابي خفيف */
+      .card-canvas.no-bg::before {
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 1) 0%,
+          rgba(245, 245, 245, 1) 100%
+        );
+      }
+
+      /* إطار عاشورائي عزائي ممتد */
+      .card-border {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        border: 2px solid #1a1a1a;
+        outline: 1px solid #8b0000;
+        outline-offset: -6px;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .card-content {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+      }
+
+      /* شعار الحسينية / الجهة */
+      .card-logo-container {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      .card-logo {
+        max-height: 100%;
+        max-width: 120px;
+        object-fit: contain;
+        filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1));
+      }
+
+      .card-logo-placeholder {
+        font-family: "Reem Kufi", sans-serif;
+        font-size: 1.2rem;
+        color: #8b0000;
+        border-bottom: 1px double #8b0000;
+        padding-bottom: 5px;
+      }
+
+      /* العبارة الرئيسية الصياغة النصية مع الاهتمام بالوزن البصري */
+      .card-text {
+        font-family: "Amiri", serif;
+        font-size: 1.65rem;
+        line-height: 1.8;
+        color: #111;
+        margin: 20px 10px;
+        word-wrap: break-word;
+        font-weight: 700;
+      }
+
+      /* تخصيص الكلمات المفتاحية باللون الأحمر العزائي */
+      .card-text .highlight {
+        color: #8b0000;
+        display: block;
+        font-size: 1.9rem;
+        margin: 5px 0;
+        font-family: "Amiri", serif;
+      }
+
+      /* أسفل البطاقة: اسم المعزي والجهة */
+      .card-footer {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .card-muazzi {
+        font-family: "Tajawal", sans-serif;
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .card-jhah {
+        font-family: "Tajawal", sans-serif;
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      /* تخصيصات وضع الستوري / الحالة (16:9) */
+      .card-canvas.story {
+        width: 360px;
+        height: 640px;
+        padding: 60px 30px;
+      }
+
+      .card-canvas.story .card-text {
+        font-size: 1.5rem;
+        line-height: 1.9;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>منصة تصميم بطاقات تعزية عاشوراء</h1>
+
+    <div class="container">
+      <div class="settings-panel">
+        <h2>إعدادات البطاقة</h2>
+
+        <div class="form-group">
+          <label>مقاس المنصة المستهدفة:</label>
+          <div class="size-selector">
+            <button class="size-btn active" onclick="changeSize('post')">
+              منشور (Insta/WhatsApp)
+            </button>
+            <button class="size-btn" onclick="changeSize('story')">
+              حالة / القصة (Status)
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="input-muazzi">اسم المعزي:</label>
+          <input
+            type="text"
+            id="input-muazzi"
+            placeholder="اكتب اسمك هنا"
+            oninput="updateCard()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="input-jhah">اسم الجهة / الحسينية (اختياري):</label>
+          <input
+            type="text"
+            id="input-jhah"
+            placeholder="مثال: حسينية أهل البيت عليهم السلام"
+            oninput="updateCard()"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>شعار الحسينية / الجهة:</label>
+          <label for="input-logo" class="file-custom-btn" id="logo-label"
+            >اختر صورة الشعار</label
+          >
+          <input
+            type="file"
+            id="input-logo"
+            accept="image/*"
+            onchange="handleLogoUpload(this)"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>صورة الخلفية (سيتم تطبيق تأثير Washout):</label>
+          <label for="input-bg" class="file-custom-btn" id="bg-label"
+            >اختر صورة الخلفية</label
+          >
+          <input
+            type="file"
+            id="input-bg"
+            accept="image/*"
+            onchange="handleBgUpload(this)"
+          />
+        </div>
+
+        <button class="download-btn" onclick="downloadCard()">
+          تحميل البطاقة كصورة
+        </button>
+      </div>
+
+      <div class="preview-area">
+        <div class="card-canvas no-bg" id="cardCanvas">
+          <div class="card-border"></div>
+          <div class="card-content">
+            <div class="card-logo-container" id="logoContainer">
+              <span class="card-logo-placeholder" id="txtJhahPlaceholder"
+                >يا حسين</span
+              >
+            </div>
+
+            <div class="card-text">
+              عظَمَ اللهُ اُجُورَنا بِمُصابِنا
+              <span class="highlight">بِالحُسَينِ عليه السلام</span> وَجَعَلَنا
+              وَإياكُم مِنَ الطَّالِبِينَ بِثَأرِهِ مَعَ وَلِيِّهِ الإمام
+              المَهدِيِّ مِن آلِ مُحَمَّدٍ عليهم السلام
+            </div>
+
+            <div class="card-footer">
+              <div class="card-muazzi" id="cardMuazzi">عظم الله أجوركم</div>
+              <div class="card-jhah" id="cardJhah"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // تحديث النصوص حياً عند الكتابة
+      function updateCard() {
+        const inputMuazzi = document.getElementById("input-muazzi").value;
+        const inputJhah = document.getElementById("input-jhah").value;
+
+        const cardMuazzi = document.getElementById("cardMuazzi");
+        const cardJhah = document.getElementById("cardJhah");
+        const txtJhahPlaceholder =
+          document.getElementById("txtJhahPlaceholder");
+
+        cardMuazzi.innerText = inputMuazzi
+          ? `المعزي: ${inputMuazzi}`
+          : "عظم الله أجوركم";
+        cardJhah.innerText = inputJhah;
+
+        // إذا لم يتم رفع شعار، يظهر اسم الجهة كعنوان نصي علوي مؤقت
+        if (!document.getElementById("input-logo").files[0] && inputJhah) {
+          txtJhahPlaceholder.innerText = inputJhah;
+        } else if (!document.getElementById("input-logo").files[0]) {
+          txtJhahPlaceholder.innerText = "يا حسين";
+        }
+      }
+
+      // التعامل مع رفع الشعار
+      function handleLogoUpload(input) {
+        const file = input.files[0];
+        const container = document.getElementById("logoContainer");
+        const label = document.getElementById("logo-label");
+
+        if (file) {
+          label.innerText = "تم اختيار الشعار ✓";
+          label.style.borderColor = "#28a745";
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            container.innerHTML = `<img src="${e.target.result}" class="card-logo" alt="شعار الجهة">`;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // التعامل مع رفع الخلفية وتطبيق تأثير Washout
+      function handleBgUpload(input) {
+        const file = input.files[0];
+        const canvas = document.getElementById("cardCanvas");
+        const label = document.getElementById("bg-label");
+
+        if (file) {
+          label.innerText = "تم اختيار الخلفية ✓";
+          label.style.borderColor = "#28a745";
+
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            canvas.style.backgroundImage = `url('${e.target.result}')`;
+            canvas.classList.remove("no-bg");
+          };
+          reader.readAsDataURL(file);
+        } else {
+          canvas.style.backgroundImage = "none";
+          canvas.classList.add("no-bg");
+        }
+      }
+
+      // تغيير أبعاد البطاقة لتناسب المنشور أو الحالة (Story)
+      function changeSize(type) {
+        const canvas = document.getElementById("cardCanvas");
+        const buttons = document.querySelectorAll(".size-btn");
+
+        buttons.forEach((btn) => btn.classList.remove("active"));
+
+        if (type === "post") {
+          canvas.classList.remove("story");
+          buttons[0].classList.add("active");
+        } else if (type === "story") {
+          canvas.classList.add("story");
+          buttons[1].classList.add("active");
+        }
+      }
+
+      // تحويل جزء الـ HTML إلى صورة وتحميلها مباشرة بجودة فائقة
+      function downloadCard() {
+        const canvasElement = document.getElementById("cardCanvas");
+
+        // إعدادات إضافية لضمان جودة الخطوط والـ Canvas عند التحميل
+        const options = {
+          scale: 3, // مضاعفة الجودة 3 مرات لتبدو احترافية عند الإرسال عبر الواتساب والإنستغرام
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null,
+        };
+
+        html2canvas(canvasElement, options).then(function (canvas) {
+          const link = document.createElement("a");
+          link.download = `تعزية_عاشوراء_${Date.now()}.png`;
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+      }
+    </script>
+  </body>
+</html>
